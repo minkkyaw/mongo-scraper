@@ -11,7 +11,7 @@ let reviewContainerTemplate = `<div class="reviews-wrapper">
 
 let reviewTemplate = `<div class="review">
         <p class="review-details">{%REVIEWBODY%}</p>
-        <button data-review-id="{%REVIEWID%}" class="btn delete-review">X</button>
+        <button data-reviewid="{%REVIEWID%}" class="btn delete-review">X</button>
       </div>`;
 
 document.querySelectorAll(".scrape-btn").forEach(scrapeBtn =>
@@ -125,5 +125,27 @@ if (document.querySelectorAll(".add-review-btn"))
           location.reload();
         })
       );
+      document.querySelectorAll(".delete-review").forEach(deleteReviewBtn =>
+        deleteReviewBtn.addEventListener("click", e => {
+          e.preventDefault();
+          let id = e.target.dataset["reviewid"];
+          let url = `/item/reviews/delete`;
+          let result = fetch(url, {
+            method: "DELETE",
+            headers: {
+              "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify({ _id: id })
+          });
+          location.reload();
+        })
+      );
     })
   );
+
+window.addEventListener("click", e => {
+  if (e.target.classList.contains("reviews-container")) {
+    document.querySelector(".reviews-container").innerHTML = "";
+    document.querySelector(".reviews-container").style.display = "none";
+  }
+});

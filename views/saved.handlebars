@@ -16,7 +16,8 @@
 <div class="items-container">
   {{#each items}}
     {{#if noItem}}
-    <h1>No Items</h1>
+    <div class="no-item-container"></div>
+    <h1>No Item</h1>
     <a href="/" class="">Go To Home</a>
     {{> input-search-scrape/input-search-scrape class="scrape" value="Scrape"}}
     {{/if}}

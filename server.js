@@ -140,8 +140,8 @@ app.delete("/items", async (req, res) => {
   res.json(result);
 });
 
-app.delete("/reviews/:id", async (req, res) => {
-  const result = await db.Review.deleteMany({ _id: req.params.id });
+app.delete("/item/reviews/delete", async (req, res) => {
+  const result = await db.Review.deleteOne(req.body);
   res.json(result);
 });
 
