@@ -23,6 +23,10 @@ const ItemSchema = new Schema({
     type: String,
     required: true
   },
+  saveItem: {
+    type: Boolean,
+    default: false
+  },
   review: [
     {
       type: Schema.Types.ObjectId,

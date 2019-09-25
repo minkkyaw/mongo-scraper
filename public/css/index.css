@@ -184,7 +184,7 @@ body {
 }
 
 .item-wrapper {
-  width: 1000px;
+  width: 1100px;
   margin: 0px auto 40px;
   display: flex;
   justify-content: flex-start;
@@ -240,4 +240,98 @@ body {
 .save-item:focus {
   outline: none;
   transform: scale(1.1);
+}
+
+.btn-groups {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.delete-from-save-btn {
+  display: inline-block;
+  align-self: center;
+  background-color: #ff1f1f;
+  color: #fff;
+  margin: 10px 0;
+  width: 180px;
+}
+
+.delete-from-save-btn:hover {
+  background-color: #fff;
+  color: #ff1f1f;
+}
+
+.delete-from-save-btn:focus {
+  outline: none;
+  transform: scale(1.1);
+}
+
+.add-review-btn {
+  display: inline-block;
+  align-self: center;
+  background-color: #1f9aff;
+  color: #fff;
+  margin: 10px 0;
+  width: 180px;
+}
+
+.add-review-btn:hover {
+  background-color: #fff;
+  color: #1f9aff;
+}
+
+.add-review-btn:focus {
+  outline: none;
+  transform: scale(1.1);
+}
+
+.no-item-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.no-item-title {
+  margin: 20px 0;
+}
+
+.reviews-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(112, 112, 112, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.review-wrapper {
+  border-top: 1px solid rgb(102, 102, 102);
+  border-bottom: 1px solid rgb(102, 102, 102);
+  margin: 15px 0;
+}
+
+.reviews-wrapper {
+  padding: 20px;
+  width: 500px;
+  background-color: rgba(255, 255, 255, 1);
+  overflow-y: auto;
+}
+
+.review-item-title {
+  padding-bottom: 10px;
+}
+
+.review {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.review-input {
+  width: 100%;
+  padding: 10px;
 }

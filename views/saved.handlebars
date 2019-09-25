@@ -6,21 +6,19 @@
   </div>
   <ul class="nav-items">
     {{> nav-link/nav-link class="search" value="Search"}}
-    {{> input-search-scrape/input-search-scrape class="search" value="Search"}}
     {{> input-search-scrape/input-search-scrape class="scrape" value="Scrape"}}
   </ul>
   <div class="nav-btn-group">
     <button class="clear-items action-btn inherit">CLEAR ITEMS</button>
   </div>
 </div>
-{{> wallpaper/wallpaper title="MONGO SCRAPER" description="BEST BUY EDITION"}}
+{{> wallpaper/wallpaper title="SAVED ITEMS" description="BEST BUY EDITION"}}
 <div class="items-container">
   {{#each items}}
     {{#if noItem}}
-      <div class="no-item-container">
-        <h1 class="no-item-title">No Items</h1>
-        {{> input-search-scrape/input-search-scrape class="search" value="Search"}}
-      </div>
+    <h1>No Items</h1>
+    <a href="/" class="">Go To Home</a>
+    {{> input-search-scrape/input-search-scrape class="scrape" value="Scrape"}}
     {{/if}}
     {{#unless noItem}}
       <div class="item-wrapper">
@@ -45,8 +43,13 @@
             See Details
           </a>
         </div>
-        <button class="save-item btn inherit" data-id="{{this.id}}">SAVE ITEM</button>
+        <div class="btn-groups">
+          <button class="delete-from-save-btn btn inherit" data-id="{{this.id}}">Delete From Saved</button>    
+          <button class="add-review-btn btn inherit" data-id="{{this.id}}">Add review</button>
+        </div>
       </div>
     {{/unless}}
   {{/each}}
+</div>
+<div class="reviews-container" style="display: none;">
 </div>

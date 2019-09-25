@@ -1,24 +1,17 @@
-<li>
-	{{name}}
-
-	<button class="change-sleep" data-id="{{id}}" data-newsleep="{{sleep}}">
-		{{#if sleep}}SLEEP TIME!{{else}}WAKE UP!{{/if}}
-	</button>
-
-	<button class="delete-cat" data-id="{{this.id}}">DELETE!</button>
+<li class="nav-item">
+	<form class="{{class}}-form">
+		<label class="search-input-label" for="{{class}}">
+			<div class="search-label-logo"></div>
+		</label>
+		<input
+			class="{{class}}-input inherit"
+			type="text"
+			placeholder="{{value}}"
+		/>
+		<input
+			class="{{class}}-btn btn inherit"
+			type="submit"
+			value="{{value}}"
+		/>
+	</form>
 </li>
-<form class="search-form">
-        <label class="search-input-label" for="search">
-          <div class="search-label-logo"></div>
-        </label>
-        <input
-          class="search-input inherit"
-          type="text"
-          placeholder="Search"
-        />
-        <input
-          class="search-btn btn inherit"
-          type="submit"
-          value="Search"
-        />
-      </form>

@@ -39,6 +39,7 @@ const getScrapFromBestbuy = (searchInput, res) => {
           .find("span")
           .html();
         if (price) price = price.replace("$<!-- -->", "");
+        else price = null;
         let imageUrl = $(this)
           .find(".product-image")
           .attr("src");
@@ -67,27 +68,42 @@ mongoose.connect("mongodb://localhost/mongoscraper", {
   useNewUrlParser: true
 });
 
-// Routes
-
 app.get("/", async (req, res) => {
-  let items = await db.Item.find();
+  let items = await db.Item.find({ saveItem: false });
   if (items.length === 0) items = [{ noItem: true }];
   res.render("index", { items: items });
 });
 
-// A GET route for scraping the echoJS website
+app.get("/home", async (req, res) => {
+  let items = await db.Item.find({ category: req.query.category });
+  if (items.length === 0) items = [{ noItem: true }];
+  res.render("index", { items: items });
+});
+
+app.get("/saved", async (req, res) => {
+  let items = await db.Item.find({ saveItem: true });
+  if (items.length === 0) items = [{ noItem: true }];
+  res.render("saved", { items: items });
+});
+
 app.get("/scrape", async (req, res) => {
   await db.Item.deleteMany({ category: req.query.searchInput });
   getScrapFromBestbuy(req.query.searchInput, res);
 });
 
-// Route for getting all Articles from the db
 app.get("/items", async (req, res) => {
   const result = await db.Item.find({ category: req.query.searchInput });
   res.json(result);
 });
 
-// Route for grabbing a specific Article by id, populate it with it's note
+app.put("/items/saved/:id/:boolean", async (req, res) => {
+  const item = await db.Item.updateOne(
+    { _id: req.params.id },
+    { $set: { saveItem: req.params.boolean } }
+  );
+  res.json(item);
+});
+
 app.get("/items/:id", async (req, res) => {
   const item = await db.Item.findById(req.params.id);
   item.review = await db.Review.find()
@@ -97,7 +113,6 @@ app.get("/items/:id", async (req, res) => {
   res.json(item);
 });
 
-// Route for saving/updating an Article's associated Note
 app.post("/items/:id", function(req, res) {
   db.Review.create(req.body)
     .then(function(reviewResult) {
