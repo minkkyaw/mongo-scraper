@@ -1,38 +1,89 @@
-<h1>Cats!</h1>
-
-<h2>Cats that are not sleepy!</h2>
-
-<ul>
-  {{#each cats}}
-    {{#unless sleepy}}
-      {{> cats/cat-block sleep=true}}
+<div class="nav-bar">
+  <div class="logo">
+    <a class="text-deco-none" href="/">
+      <h1>Mongo Scraper</h1>
+    </a>
+  </div>
+  <ul class="nav-items">
+    <li class="nav-item">
+      <a class="nav-link" href="/">HOME</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/special-events">SAVED ITEMS</a>
+    </li>
+    <li class="nav-item">
+      <form class="search-form">
+        <label class="search-input-label" for="search">
+          <div class="search-label-logo"></div>
+        </label>
+        <input
+          class="search-input inherit"
+          type="text"
+          placeholder="Search"
+        />
+        <input
+          class="search-btn btn inherit"
+          type="submit"
+          value="Search"
+        />
+      </form>
+    </li>
+    <li class="nav-item">
+      <form class="scrape-form">
+        <label class="search-input-label" for="scrape">
+          <div class="search-label-logo"></div>
+        </label>
+        <input
+          class="scrape-input inherit"
+          type="text"
+          placeholder="Scrape"
+        />
+        <input
+          class="scrape-btn btn inherit"
+          type="submit"
+          value="Scrape"
+        />
+      </form>
+    </li>
+  </ul>
+  <div class="nav-btn-group">
+    <button class="clear-items action-btn inherit">CLEAR ITEMS</button>
+  </div>
+</div>
+<div class="wallpaper">
+  <h2 class="wallpaper-logo-header">MONGO SCRAPER</h2>
+  <p class="wallpaper-logo-description">BEST BUY EDITION</p>
+</div>
+<div class="items-container">
+  {{#each items}}
+    {{#if noItem}}
+    <h1>No Items</h1>
+    {{/if}}
+    {{#unless noItem}}
+      <div class="item-wrapper">
+        <div class="item-image-container" style="background-image: url('{{this.imageUrl}}');"></div>
+        <div class="item-details">
+          <div class="title-price">
+            <a
+              href="{{this.link}}"
+              class="item-link"
+            >
+              <h3 class="item-title">
+                {{this.title}}
+              </h3>
+            </a>
+            <p class="item-price">$ {{this.price}}</p>
+          </div>
+          <a
+            href="{{this.link}}"
+            class="see-details-btn btn text-deco-none"
+            target="_blank"
+          >
+            See Details
+          </a>
+        </div>
+        <button class="save-item btn inherit" data-id="{{this.id}}">SAVE ITEM</button>
+      </div>
     {{/unless}}
   {{/each}}
-</ul>
-
-<h2>Cats that are sleepy!</h2>
-
-<ul>
-  {{#each cats}}
-    {{#if sleepy}}
-      {{> cats/cat-block sleep=false}}
-    {{/if}}
-  {{/each}}
-</ul>
-
-<h2>Add a Cat</h2>
-<form class="create-form">
-
-  <div class="form-group">
-    <label for="ca">Cat Name:</label>
-    <input type="text" id="ca" name="name">
-  </div>
-
-  <div class="form-group">
-    <label for="slee">Sleepy?</label><br>
-    <input type="radio" name="sleepy" value="1" checked> Sleepy!<br>
-    <input type="radio" name="sleepy" value="0"> Awake
-  </div>
-
-  <button type="submit">Add Cat</button>
-</form>
+</div>

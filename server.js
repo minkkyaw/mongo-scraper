@@ -1,89 +1,129 @@
-var express = require("express");
-var logger = require("morgan");
-var mongoose = require("mongoose");
+const express = require("express");
+const logger = require("morgan");
+const mongoose = require("mongoose");
+const axios = require("axios");
+const cheerio = require("cheerio");
 
-var axios = require("axios");
-var cheerio = require("cheerio");
+const db = require("./models");
 
-var db = require("./models");
-
-var PORT = 3000;
+const PORT = 3000;
 
 // Initialize Express
-var app = express();
+const path = require("path");
+const app = express();
 
-app.use(logger("dev"));
-// Parse request body as JSON
+// app.use(logger("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// Make public a static folder
 app.use(express.static("public"));
 
-// Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/unit18Populater", {
+const exphbs = require("express-handlebars");
+
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
+
+const getScrapFromBestbuy = (searchInput, res) => {
+  let url = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&id=pcat17071&iht=y&keys=keys&ks=960&list=n&sc=Global&st=${searchInput}&type=page&usc=All%20Categories`;
+  axios
+    .get(url)
+    .then(function(response) {
+      let $ = cheerio.load(response.data);
+      let result = new Array();
+      $("li.sku-item").each(function(i, element) {
+        let title = $(this)
+          .find(".sku-header")
+          .children("a")
+          .text();
+        let price = $(this)
+          .find(".priceView-hero-price.priceView-customer-price")
+          .find("span")
+          .html();
+        if (price) price = price.replace("$<!-- -->", "");
+        let imageUrl = $(this)
+          .find(".product-image")
+          .attr("src");
+        let link =
+          "https://www.bestbuy.com" +
+          $(this)
+            .find(".sku-header")
+            .children("a")
+            .attr("href");
+        result.push(
+          Object.assign(
+            {},
+            { category: searchInput, title, price, imageUrl, link }
+          )
+        );
+      });
+      return result;
+    })
+    .then(result => {
+      result.map((item, i) => db.Item.create(item));
+    })
+    .then(() => res.send("Scrape Complete"));
+};
+
+mongoose.connect("mongodb://localhost/mongoscraper", {
   useNewUrlParser: true
 });
 
 // Routes
 
+app.get("/", async (req, res) => {
+  let items = await db.Item.find();
+  if (items.length === 0) items = [{ noItem: true }];
+  res.render("index", { items: items });
+});
+
 // A GET route for scraping the echoJS website
-app.get("/scrape", function(req, res) {
-  // First, we grab the body of the html with axios
-  axios.get("http://www.echojs.com/").then(function(response) {
-    // Then, we load that into cheerio and save it to $ for a shorthand selector
-    var $ = cheerio.load(response.data);
-
-    // Now, we grab every h2 within an article tag, and do the following:
-    $("article h2").each(function(i, element) {
-      // Save an empty result object
-      var result = {};
-
-      // Add the text and href of every link, and save them as properties of the result object
-      result.title = $(this)
-        .children("a")
-        .text();
-      result.link = $(this)
-        .children("a")
-        .attr("href");
-
-      // Create a new Article using the `result` object built from scraping
-      db.Article.create(result)
-        .then(function(dbArticle) {
-          // View the added result in the console
-          console.log(dbArticle);
-        })
-        .catch(function(err) {
-          // If an error occurred, log it
-          console.log(err);
-        });
-    });
-
-    // Send a message to the client
-    res.send("Scrape Complete");
-  });
+app.get("/scrape", async (req, res) => {
+  await db.Item.deleteMany({ category: req.query.searchInput });
+  getScrapFromBestbuy(req.query.searchInput, res);
 });
 
 // Route for getting all Articles from the db
-app.get("/articles", function(req, res) {
-  // TODO: Finish the route so it grabs all of the articles
+app.get("/items", async (req, res) => {
+  const result = await db.Item.find({ category: req.query.searchInput });
+  res.json(result);
 });
 
 // Route for grabbing a specific Article by id, populate it with it's note
-app.get("/articles/:id", function(req, res) {
-  // TODO
-  // ====
-  // Finish the route so it finds one article using the req.params.id,
-  // and run the populate method with "note",
-  // then responds with the article with the note included
+app.get("/items/:id", async (req, res) => {
+  const item = await db.Item.findById(req.params.id);
+  item.review = await db.Review.find()
+    .where("_id")
+    .in(item.review)
+    .exec();
+  res.json(item);
 });
 
 // Route for saving/updating an Article's associated Note
-app.post("/articles/:id", function(req, res) {
-  // TODO
-  // ====
-  // save the new note that gets posted to the Notes collection
-  // then find an article from the req.params.id
-  // and update it's "note" property with the _id of the new note
+app.post("/items/:id", function(req, res) {
+  db.Review.create(req.body)
+    .then(function(reviewResult) {
+      db.Item.findById(req.params.id).then(result => {
+        result.review = [...result.review, reviewResult._id];
+        result.save();
+      });
+    })
+    .then(function(dbItem) {
+      res.json(dbItem);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
+app.delete("/items", async (req, res) => {
+  const result = await db.Item.deleteMany({
+    $or: [{ category: req.query.category }, { _id: req.query.id }]
+  });
+  res.json(result);
+});
+
+app.delete("/reviews/:id", async (req, res) => {
+  const result = await db.Review.deleteMany({ _id: req.params.id });
+  res.json(result);
 });
 
 app.listen(PORT, function() {
