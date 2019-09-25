@@ -64,9 +64,10 @@ const getScrapFromBestbuy = (searchInput, res) => {
     .then(() => res.send("Scrape Complete"));
 };
 
-mongoose.connect("mongodb://localhost/mongoscraper", {
-  useNewUrlParser: true
-});
+const MONGODB_URI =
+  process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+
+mongoose.connect(MONGODB_URI);
 
 app.get("/", async (req, res) => {
   let items = await db.Item.find({ saveItem: false });
