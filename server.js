@@ -76,7 +76,10 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/home", async (req, res) => {
-  let items = await db.Item.find({ category: req.query.category });
+  let items = await db.Item.find({
+    category: req.query.category,
+    saveItem: false
+  });
   if (items.length === 0) items = [{ noItem: true }];
   res.render("index", { items: items });
 });

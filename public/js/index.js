@@ -18,16 +18,19 @@ document.querySelectorAll(".scrape-btn").forEach(scrapeBtn =>
   scrapeBtn.addEventListener("click", async e => {
     e.preventDefault();
     let searchInput = document.querySelector(".scrape-input").value;
-    let url = `/scrape?searchInput=${searchInput}`;
-    let result = await fetch(url);
-    result = await result.json();
-    alert("Successfully scraped");
+    if (searchInput) {
+      alert("Successfully scraped");
+      let url = `/scrape?searchInput=${searchInput}`;
+      let result = await fetch(url);
+      result = await result.json();
+    } else alert("Enter something");
   })
 );
 
 if (document.querySelectorAll(".search-btn"))
   document.querySelectorAll(".search-btn").forEach(searchBtn =>
     searchBtn.addEventListener("click", async e => {
+      e.preventDefault();
       let searchInput = document.querySelector(".search-input").value;
       let url = `/home?category=${searchInput}`;
       window.location.href = url;
