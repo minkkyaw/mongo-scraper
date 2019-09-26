@@ -19,10 +19,9 @@ document.querySelectorAll(".scrape-btn").forEach(scrapeBtn =>
     e.preventDefault();
     let searchInput = document.querySelector(".scrape-input").value;
     if (searchInput) {
-      alert("Successfully scraped");
       let url = `/scrape?searchInput=${searchInput}`;
+      setTimeout(() => alert("Successfully scraped"), 3000);
       let result = await fetch(url);
-      result = await result.json();
     } else alert("Enter something");
   })
 );
@@ -70,7 +69,6 @@ if (document.querySelectorAll(".add-review-btn"))
     addReviewBtn.addEventListener("click", async e => {
       e.preventDefault();
       let id = e.target.dataset.id;
-      console.log(id);
       let url = `/items/${id}`;
       let result = await fetch(url);
       result = await result.json();
@@ -149,3 +147,11 @@ window.addEventListener("click", e => {
     document.querySelector(".reviews-container").style.display = "none";
   }
 });
+
+if (document.querySelector(".clear-items"))
+  document.querySelector(".clear-items").addEventListener("click", async () => {
+    await fetch("/items", {
+      method: "DELETE"
+    });
+    location.reload();
+  });

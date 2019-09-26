@@ -65,7 +65,7 @@ const getScrapFromBestbuy = (searchInput, res) => {
     })
     .then(() => res.send("Scrape Complete"));
 };
-console.log(config.db);
+
 const MONGODB_URI = config.db || "mongodb://localhost/mongoHeadlines";
 
 mongoose.connect(MONGODB_URI);
@@ -135,9 +135,13 @@ app.post("/items/:id", function(req, res) {
 });
 
 app.delete("/items", async (req, res) => {
-  const result = await db.Item.deleteMany({
-    $or: [{ category: req.query.category }, { _id: req.query.id }]
-  });
+  const result = await db.Item.deleteMany(
+    req.query.category || req.query.id
+      ? {
+          $or: [{ category: req.query.category }, { _id: req.query.id }]
+        }
+      : {}
+  );
   res.json(result);
 });
 
