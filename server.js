@@ -71,7 +71,7 @@ const getScrapFromBestbuy = (searchInput, res) => {
         )
       );
   } catch (err) {
-    res.send(err);
+    res.json({ body: err });
   }
 };
 
