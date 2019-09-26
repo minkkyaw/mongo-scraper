@@ -75,18 +75,10 @@ const getScrapFromBestbuy = (searchInput, res) => {
   }
 };
 
-const DB = process.env.DATABASE.replace(
-  "<PASSWORD>",
-  process.env.DATABASE_PASSWORD
-);
+console.log(process.env.DB);
+const MONGODB_URI = process.env.DB || "mongodb://localhost/mongoHeadlines";
 
-mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false
-  })
-  .then(() => console.log("DB connection successful"));
+mongoose.connect(MONGODB_URI);
 
 app.get("/", async (req, res) => {
   let items = await db.Item.find({ saveItem: false });
