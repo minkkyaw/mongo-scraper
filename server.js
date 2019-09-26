@@ -59,12 +59,11 @@ const getScrapFromBestbuy = (searchInput, res) => {
             )
           );
         });
-        res.json({ body: JSON.stringify(result) });
         return result;
       })
       .then(result =>
         db.Item.create(result).then(result =>
-          res.json({
+          res.status(200).json({
             body: `${result.length} ${
               result.length > 1 ? "items are" : "item is"
             } scraped!`
