@@ -16,10 +16,10 @@
 <div class="items-container">
   {{#each items}}
     {{#if noItem}}
-    <div class="no-item-container"></div>
-    <h1>No Item</h1>
-    <a href="/" class="">Go To Home</a>
-    {{> input-search-scrape/input-search-scrape class="scrape" value="Scrape"}}
+    <div class="no-item-container">
+      <h1 class="no-item-title">No Item</h1>
+      <a href="/" class="no-item-link-btn text-deco-none">Go To Home</a>
+    </div>
     {{/if}}
     {{#unless noItem}}
       <div class="item-wrapper">

@@ -296,6 +296,13 @@ body {
   margin: 20px 0;
 }
 
+.no-item-link-btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #4e41ff;
+  color: #fff;
+}
+
 .reviews-container {
   position: fixed;
   top: 0;
@@ -318,7 +325,6 @@ body {
   padding: 20px;
   width: 500px;
   background-color: rgba(255, 255, 255, 1);
-  overflow-y: auto;
 }
 
 .review-item-title {
@@ -335,3 +341,4 @@ body {
   width: 100%;
   padding: 10px;
 }
+

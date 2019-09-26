@@ -6,6 +6,8 @@ const cheerio = require("cheerio");
 
 const db = require("./models");
 
+const config = require("./config");
+
 const PORT = process.env.PORT || 3000;
 
 // Initialize Express
@@ -63,9 +65,8 @@ const getScrapFromBestbuy = (searchInput, res) => {
     })
     .then(() => res.send("Scrape Complete"));
 };
-
-const MONGODB_URI =
-  process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+console.log(config.db);
+const MONGODB_URI = config.db || "mongodb://localhost/mongoHeadlines";
 
 mongoose.connect(MONGODB_URI);
 
