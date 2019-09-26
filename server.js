@@ -3,15 +3,15 @@ const logger = require("morgan");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const cheerio = require("cheerio");
-const dotenv = require("dotenv");
-
-dotenv.config({ path: "./config.env" });
 
 const db = require("./models");
 
-const PORT = process.env.PORT || 3000;
-mongoose.Promise = Promise;
+const config = require("./config");
 
+const PORT = process.env.PORT || 3000;
+
+// Initialize Express
+const path = require("path");
 const app = express();
 
 // app.use(logger("dev"));
@@ -75,10 +75,14 @@ const getScrapFromBestbuy = (searchInput, res) => {
   }
 };
 
-console.log(process.env.DB);
-const MONGODB_URI = process.env.DB || "mongodb://localhost/mongoHeadlines";
+const MONGODB_URI = config.db || "mongodb://localhost/mongoHeadlines";
 
-mongoose.connect(MONGODB_URI);
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true
+});
 
 app.get("/", async (req, res) => {
   let items = await db.Item.find({ saveItem: false });
@@ -152,6 +156,7 @@ app.delete("/items", async (req, res) => {
         }
       : {}
   );
+  await db.Review.deleteMany({});
   res.json(result);
 });
 
