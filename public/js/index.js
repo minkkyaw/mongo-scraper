@@ -20,8 +20,9 @@ document.querySelectorAll(".scrape-btn").forEach(scrapeBtn =>
     let searchInput = document.querySelector(".scrape-input").value;
     if (searchInput) {
       let url = `/scrape?searchInput=${searchInput}`;
-      setTimeout(() => alert("Successfully scraped"), 3000);
       let result = await fetch(url);
+      result = await result.json();
+      setTimeout(() => alert(result.body), 3000);
     } else alert("Enter something");
   })
 );

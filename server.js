@@ -26,44 +26,48 @@ app.set("view engine", "handlebars");
 
 const getScrapFromBestbuy = (searchInput, res) => {
   let url = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&id=pcat17071&iht=y&keys=keys&ks=960&list=n&sc=Global&st=${searchInput}&type=page&usc=All%20Categories`;
-  axios
-    .get(url)
-    .then(function(response) {
-      let $ = cheerio.load(response.data);
-      let result = new Array();
-      $("li.sku-item").each(function(i, element) {
-        let title = $(this)
-          .find(".sku-header")
-          .children("a")
-          .text();
-        let price = $(this)
-          .find(".priceView-hero-price.priceView-customer-price")
-          .find("span")
-          .html();
-        if (price) price = price.replace("$<!-- -->", "");
-        else price = null;
-        let imageUrl = $(this)
-          .find(".product-image")
-          .attr("src");
-        let link =
-          "https://www.bestbuy.com" +
-          $(this)
+  try {
+    axios
+      .get(url)
+      .then(function(response) {
+        let $ = cheerio.load(response.data);
+        let result = new Array();
+        $("li.sku-item").each(function(i, element) {
+          let title = $(this)
             .find(".sku-header")
             .children("a")
-            .attr("href");
-        result.push(
-          Object.assign(
-            {},
-            { category: searchInput, title, price, imageUrl, link }
-          )
-        );
-      });
-      return result;
-    })
-    .then(result => {
-      result.map((item, i) => db.Item.create(item));
-    })
-    .then(() => res.send("Scrape Complete"));
+            .text();
+          let price = $(this)
+            .find(".priceView-hero-price.priceView-customer-price")
+            .find("span")
+            .html();
+          if (price) price = parseInt(price.replace("$<!-- -->", ""));
+          else price = " - ";
+          let imageUrl = $(this)
+            .find(".product-image")
+            .attr("src");
+          let link =
+            "https://www.bestbuy.com" +
+            $(this)
+              .find(".sku-header")
+              .children("a")
+              .attr("href");
+          result.push(
+            Object.assign(
+              {},
+              { category: searchInput, title, price, imageUrl, link }
+            )
+          );
+        });
+        return result;
+      })
+      .then(result => {
+        result.map((item, i) => db.Item.create(item));
+      })
+      .then(() => res.json({ body: "Scrape Complete" }));
+  } catch (err) {
+    res.send(err);
+  }
 };
 
 const MONGODB_URI = config.db || "mongodb://localhost/mongoHeadlines";
