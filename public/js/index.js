@@ -17,11 +17,12 @@ let reviewTemplate = `<div class="review">
 document.querySelectorAll(".scrape-btn").forEach(scrapeBtn =>
   scrapeBtn.addEventListener("click", async e => {
     e.preventDefault();
-    let searchInput = document.querySelector(".scrape-input").value;
+    let searchInput = document.querySelector(".scrape-input");
     if (searchInput) {
-      let url = `/scrape?searchInput=${searchInput}`;
+      let url = `/scrape?searchInput=${searchInput.value}`;
       let result = await fetch(url);
       result = await result.json();
+      searchInput.value = "";
       setTimeout(() => alert(result.body), 3000);
     } else alert("Enter something");
   })

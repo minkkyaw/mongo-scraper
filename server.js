@@ -62,13 +62,14 @@ const getScrapFromBestbuy = (searchInput, res) => {
         return result;
       })
       .then(result =>
-        db.Item.create(result).then(result =>
-          res.status(200).json({
-            body: `${result.length} ${
-              result.length > 1 ? "items are" : "item is"
-            } scraped!`
-          })
-        )
+        // db.Item.create(result).then(result =>
+        //   res.status(200).json({
+        //     body: `${result.length} ${
+        //       result.length > 1 ? "items are" : "item is"
+        //     } scraped!`
+        //   })
+        // )
+        db.Item.create(result)
       );
   } catch (err) {
     res.json({ body: err });
@@ -108,6 +109,9 @@ app.get("/saved", async (req, res) => {
 app.get("/scrape", async (req, res) => {
   await db.Item.deleteMany({ category: req.query.searchInput });
   getScrapFromBestbuy(req.query.searchInput, res);
+  res.status(200).json({
+    body: `Scraped Successfully!`
+  });
 });
 
 app.get("/items", async (req, res) => {
