@@ -27,41 +27,60 @@ app.set("view engine", "handlebars");
 const getScrapFromBestbuy = (searchInput, res) => {
   let url = `https://www.bestbuy.com/site/searchpage.jsp?_dyncharset=UTF-8&id=pcat17071&iht=y&keys=keys&ks=960&list=n&sc=Global&st=${searchInput}&type=page&usc=All%20Categories`;
   try {
-    axios
-      .get(url)
-      .then(function(response) {
-        let $ = cheerio.load(response.data);
-        let result = new Array();
-        $("li.sku-item").each(function(i, element) {
-          let title = $(this)
-            .find(".sku-header")
-            .children("a")
-            .text();
-          let price = $(this)
-            .find(".priceView-hero-price.priceView-customer-price")
-            .find("span")
-            .html();
-          if (price) price = parseInt(price.replace("$<!-- -->", ""));
-          else price = " - ";
-          let imageUrl = $(this)
-            .find(".product-image")
-            .attr("src");
-          let link =
-            "https://www.bestbuy.com" +
-            $(this)
-              .find(".sku-header")
-              .children("a")
-              .attr("href");
-          result.push(
-            Object.assign(
-              {},
-              { category: searchInput, title, price, imageUrl, link }
-            )
-          );
-        });
-        return result;
+    // axios
+    //   .get(url)
+    //   .then(function(response) {
+    //     let $ = cheerio.load(response.data);
+    //     let result = new Array();
+    //     $("li.sku-item").each(function(i, element) {
+    //       let title = $(this)
+    //         .find(".sku-header")
+    //         .children("a")
+    //         .text();
+    //       let price = $(this)
+    //         .find(".priceView-hero-price.priceView-customer-price")
+    //         .find("span")
+    //         .html();
+    //       if (price) price = parseInt(price.replace("$<!-- -->", ""));
+    //       else price = " - ";
+    //       let imageUrl = $(this)
+    //         .find(".product-image")
+    //         .attr("src");
+    //       let link =
+    //         "https://www.bestbuy.com" +
+    //         $(this)
+    //           .find(".sku-header")
+    //           .children("a")
+    //           .attr("href");
+    //       result.push(
+    //         Object.assign(
+    //           {},
+    //           { category: searchInput, title, price, imageUrl, link }
+    //         )
+    //       );
+    //     });
+    //     console.log(result);
+    //     return result;
+    //   })
+    //   .then(result =>
+    db.Item.create([
+      {
+        category: "scrape",
+        title: "Divides [LP] - VINYL",
+        price: 19,
+        imageUrl:
+          "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/2213/22132678_so.jpg;maxHeight=200;maxWidth=300",
+        link:
+          "https://www.bestbuy.com/site/divides-lp-vinyl/22132678.p?skuId=22132678"
+      }
+    ])
+    .then(result =>
+      res.status(200).json({
+        body: `${result.length} ${
+          result.length > 1 ? "items are" : "item is"
+        } scraped!`
       })
-      .then(result => db.Item.create(result));
+    );
   } catch (err) {
     res.json({ body: err });
   }
@@ -98,9 +117,6 @@ app.get("/saved", async (req, res) => {
 });
 
 app.get("/scrape", async (req, res) => {
-  res.status(200).json({
-    body: `Scraped successfully!`
-  });
   await db.Item.deleteMany({ category: req.query.searchInput });
   getScrapFromBestbuy(req.query.searchInput, res);
 });
