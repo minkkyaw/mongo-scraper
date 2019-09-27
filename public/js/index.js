@@ -23,7 +23,7 @@ document.querySelectorAll(".scrape-btn").forEach(scrapeBtn =>
       let result = await fetch(url);
       result = await result.json();
       searchInput.value = "";
-      alert(result.body);
+      setTimeout(() => alert(result.body), 3000);
     } else alert("Enter something");
   })
 );
